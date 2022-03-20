@@ -36,6 +36,7 @@ func main() {
 	}
 
 	path = filepath.Dir(path)
+	fmt.Println(path)
 	words, err = getwords_from(filepath.Join(path, files[0]))
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "読み込みに失敗しました", err)
