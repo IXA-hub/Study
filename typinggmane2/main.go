@@ -4,27 +4,50 @@ import (
 	"bufio"
 	"flag"
 	"fmt"
+	"io"
 	"os"
 	"path/filepath"
+	"time"
 )
 
 func main() {
-	files2 := flag.Args()
 	flag.Parse()
+	files := flag.Args()
 
 	exe, err := os.Getwd()
 	if err != nil {
 		fmt.Println(err)
+		os.Exit(0)
+	} else if len(files) != 1 {
+		fmt.Fprintln(os.Stderr, "指定できるファイル数は1つだけです")
+		os.Exit(0)
 	}
-	fmt.Println(exe)
-	path := filepath.Dir(exe)
 
-	fmt.Println(path)
-	files := "words.txt"
-	fmt.Println(files2)
-	fmt.Println(filepath.Join(exe, files))
-	words, err := openfile_return_array_char(filepath.Join(exe, files))
-	fmt.Println(words)
+	file_path := filepath.Join(exe, files[0])
+
+	words, err := openfile_return_array_char(file_path)
+	if err != nil {
+		fmt.Fprintln(os.Stderr, "読み込みに失敗しました", err)
+		os.Exit(0)
+	}
+
+	ch_rcv := myinput(os.Stdin)
+	fmt.Println("タイピングゲームを始めます。制限時間は10秒。1語一点", len(words), "点満点")
+	score := 0
+	for i := true; i && score < len(words); {
+		question := words[score]
+		fmt.Print(question)
+		fmt.Print(">")
+		select {
+		case x := <-ch_rcv:
+			if question == x {
+				score++
+			}
+		case <-time.After(10 * time.Second):
+			fmt.Println("制限時間を過ぎました")
+			i = false
+		}
+	}
 }
 
 /*
@@ -62,4 +85,15 @@ func openfile_return_array_char(file_path string) ([]string, error) {
 	}
 
 	return words, err
+}
+
+func myinput(r io.Reader) <-chan string {
+	ch1 := make(chan string)
+	go func() {
+		s := bufio.NewScanner(r)
+		for s.Scan() {
+			ch1 <- s.Text()
+		}
+	}()
+	return ch1
 }
