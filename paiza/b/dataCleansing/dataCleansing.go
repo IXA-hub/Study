@@ -1,17 +1,19 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"os"
-	"bufio"
-	"strings"
 	"strconv"
+	"strings"
+	"reflect"
 )
 
 func main() {
 	var (
 		respondent, question int
-		answer [][]string
+		answer               [][]string
+		average              []int
 	)
 
 	scanner := bufio.NewScanner(os.Stdin)
@@ -25,23 +27,29 @@ func main() {
 	}
 
 	for i := 0; i < len(answer); i++ {
+		validCount := 0
+		validAnswer := []int{}
+		validTotal := 0
 		for j := 0; j < question; j++ {
-			fmt.Print(answer[j][i])
-		}
-		fmt.Println(i)
-	}
-
-	fmt.Print(answer)
-}
-
-func inputCheck(input []string) bool {
-	check := true
-	label1:
-		for _, v := range input {
-			_, err := strconv.Atoi(v); if err != nil {
-				check = false
-				break label1
+			x, y := inputCheck(answer[i][j]); if y == true {
+				validAnswer = append(validAnswer, x)
+				validCount++
 			}
 		}
-	return check
+		println(validAnswer)
+		for _, v := range validAnswer {
+			validTotal += v
+		}
+
+		average = append(average, validTotal/validCount)
+	}
+	fmt.Print(average)
+}
+
+func inputCheck(input string) (int, bool) {
+	i, err := strconv.Atoi(input)
+	if err != nil {
+		return i, false
+	}
+	return i, true
 }
