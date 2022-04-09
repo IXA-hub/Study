@@ -30,18 +30,24 @@ func main() {
 		var validAnswer []int
 		validTotal := 0
 		for j := 0; j < respondent; j++ {
-			x, y := inputCheck(answer[j][i]); if y == true {
+			x, y := inputCheck(answer[j][i]); if y == true && x >= 0 && x <= 100 {
 				validAnswer = append(validAnswer, x)
 				validCount++
 			}
 		}
-		for _, v := range validAnswer {
-			validTotal += v
+		if validCount != 0 {
+			for _, v := range validAnswer {
+				validTotal += v
+			}
+			average = append(average, validTotal/validCount)
+		} else {
+			average = append(average, 0)
 		}
-
-		average = append(average, validTotal/validCount)
 	}
-	fmt.Print(average)
+	
+	for _, v := range average {
+		fmt.Printf("%d\n", v)
+	}
 }
 
 func inputCheck(input string) (int, bool) {
