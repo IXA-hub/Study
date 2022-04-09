@@ -6,7 +6,6 @@ import (
 	"os"
 	"strconv"
 	"strings"
-	"reflect"
 )
 
 func main() {
@@ -26,17 +25,16 @@ func main() {
 		answer = append(answer, input)
 	}
 
-	for i := 0; i < len(answer); i++ {
+	for i := 0; i < question; i++ {
 		validCount := 0
-		validAnswer := []int{}
+		var validAnswer []int
 		validTotal := 0
-		for j := 0; j < question; j++ {
-			x, y := inputCheck(answer[i][j]); if y == true {
+		for j := 0; j < respondent; j++ {
+			x, y := inputCheck(answer[j][i]); if y == true {
 				validAnswer = append(validAnswer, x)
 				validCount++
 			}
 		}
-		println(validAnswer)
 		for _, v := range validAnswer {
 			validTotal += v
 		}
